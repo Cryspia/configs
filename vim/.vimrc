@@ -1,6 +1,5 @@
 set nu
 set ruler
-set rulerformat = %15(%c%V\ %p%%%)
 set tabstop=4
 set expandtab
 set smarttab
@@ -13,12 +12,9 @@ set autoindent
 set smartindent
 set complete=.,w,b,k,t,i
 set completeopt=longest,menu
-set tabpagemax = 9
-set showtabline = 2
 set hlsearch
 set magic
 set showmatch
-set mouse = a
 
 func! MatchingQuotes()
     inoremap ( ()<left>
@@ -51,5 +47,8 @@ au FileType php,javascript,java,c,cpp,python exe AutoClose()
 au FileType php,javascript,java,c,cpp,python exe MatchingQuotes()
 
 if has ('gui_running')
+	set mouse = a
 	set cursorline
+	set tabpagemax = 9
+	set showtabline = 2
 endif
