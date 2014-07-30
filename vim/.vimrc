@@ -15,6 +15,7 @@ set completeopt=longest,menu
 set hlsearch
 set magic
 set showmatch
+syntax on
 
 func! MatchingQuotes()
     inoremap ( ()<left>
@@ -47,8 +48,9 @@ au FileType php,javascript,java,c,cpp,python exe AutoClose()
 au FileType php,javascript,java,c,cpp,python exe MatchingQuotes()
 
 if has ('gui_running')
-	set mouse = a
+	set mouse=a
 	set cursorline
-	set tabpagemax = 9
-	set showtabline = 2
+	set tabpagemax=9
+	set showtabline=2
+    colorscheme darkblue
 endif
