@@ -48,9 +48,9 @@ au FileType php,javascript,java,c,cpp,python exe AutoClose()
 au FileType php,javascript,java,c,cpp,python exe MatchingQuotes()
 
 if has ('gui_running')
-	set mouse=a
-	set cursorline
-	set tabpagemax=9
-	set showtabline=2
+    set mouse=a
+    set cursorline
+    set tabpagemax=9
+    set showtabline=2
     colorscheme darkblue
 endif
