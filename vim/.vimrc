@@ -45,6 +45,7 @@ endf
 
 au FileType php,javascript,java,c,cpp,python exe AutoClose()
 au FileType php,javascript,java,c,cpp,python exe MatchingQuotes()
+au FileType python set expandtab
 
 if has ('gui_running')
 	set mouse=a
