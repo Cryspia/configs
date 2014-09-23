@@ -40,7 +40,12 @@ func! RemoveBrackets()
         return "\<BS>"
     endif
 
+    let l:left_line = line(".")
     execute "normal! \<LEFT>%"
+    let l:right_line = line(".")
+    if l:left_line != l:right_line
+        execute "normal %"
+    endif
     let l:right = col(".")
     let l:distance = l:right - l:left
     if l:distance == -1
