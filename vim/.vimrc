@@ -34,29 +34,40 @@ func! InputBrackets()
 endf
 
 func! RemoveBrackets()
-    let l:line = getline(".")
     let l:left = col(".")
-    let l:left_char = l:line[l:left - 1]
+    let l:left_char = getline(".")[l:left - 2]
+    if index(["(", "[", "{"], l:left_char) == -1
+        return "\<BS>"
+    endif
 
-    if index(["(", "[", "{"], l:left_char) != -1
-        execute "normal %"
-        let l:right = col(".")
-        let l:distance = l:right - l:left - 1
-
-        if l:distance == -1
-            execute "normal! a\<BS>"
-        elseif l:distance == 0
-            execute "normal! a\<BS>\<BS>"
-        else
-            execute "normal! a\<BS>\<ESC>".l:distance."\<LEFT>a\<BS>"
-        endif
+    execute "normal! \<LEFT>%"
+    let l:right = col(".")
+    let l:distance = l:right - l:left
+    if l:distance == -1
+        return "\<RIGHT>\<BS>"
+    elseif l:distance == 0
+        return "\<RIGHT>\<BS>\<BS>"
     else
-        execute "normal! a\<BS>"
-    end
+        return "\<RIGHT>\<BS>\<ESC>".l:distance."\<LEFT>a\<BS>"
+    endif
 endf
 
 func! BackspaceReplace()
-    :inoremap <BS> <ESC>:call RemoveBrackets()<CR>a
+    :inoremap <BS> <c-r>=RemoveBrackets()<CR>
+endf
+
+func! ReturnInBrackets()
+    let l:pos = col(".")
+    let l:line = getline(".")
+    if l:line[l:pos - 2] == "{" && l:line[l:pos - 1] == "}"
+        return "\<RETURN>\<BS>\<RETURN>\<UP>\<TAB>"
+    else
+        return "\<RETURN>"
+    endif
+endf
+
+func! ReturnReplace()
+    :inoremap <RETURN> <c-r>=ReturnInBrackets()<CR>
 endf
 
 func! LineLength()
@@ -64,12 +75,14 @@ func! LineLength()
         set colorcolumn=80
     else
         highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-        match OverLength /\%>79v.\+/
+        match OverLength /\%80v.\+/
     endif
 endf
 
 au FileType php,javascript,java,c,cpp,python,vim exe InputBrackets()
 au FileType php,javascript,java,c,cpp,python,vim exe BackspaceReplace()
+au FileType javascript,java,c,cpp exe ReturnReplace()
+
 au FileType php,javascript,java,c,cpp,python,vim exe LineLength()
 au FileType javascript,python,vim set expandtab
 
