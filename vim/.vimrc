@@ -16,6 +16,7 @@ set magic
 set showmatch
 syntax on
 
+"-------------------------------------------------------------------------------
 func! CloseBracket(char)
     if getline('.')[col('.') - 1] == a:char
         return "\<RIGHT>"
@@ -91,18 +92,34 @@ au FileType javascript,java,c,cpp exe ReturnReplace()
 au FileType php,javascript,java,c,cpp,python,vim exe LineLength()
 au FileType javascript,python,vim set expandtab
 
+"-------------------------------------------------------------------------------
 func! CompileC()
-    :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').
-\            ' -o '.shellescape('%:r')<CR>
-    :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').
-\            ' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+    if has ('win32')
+        :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+\               shellescape('%:r.exe')<CR>
+        :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+\               shellescape('%:r.exe').' && ./'.shellescape('%:r.exe')<CR>
+    else
+        :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+\               shellescape('%:r')<CR>
+        :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+\               shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+    endif
 endf
 
 func! CompileCPP()
-    :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\            ' -o '.shellescape('%:r')<CR>
-    :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\            ' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+    if has ('win32')
+        :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+\               ' -o '.shellescape('%:r.exe')<CR>
+        :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+\               ' -o '.shellescape('%:r.exe').' && ./'.shellescape('%:r.exe')
+\               <CR>
+    else
+        :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+\               ' -o '.shellescape('%:r')<CR>
+        :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+\               ' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+    endif
 endf
 
 func! RunPython()
@@ -113,6 +130,7 @@ au FileType c exe CompileC()
 au FileType cpp exe CompileCPP()
 au FileType python exe RunPython()
 
+"-------------------------------------------------------------------------------
 if has ('gui_running')
     set mouse=a
     set cursorline
