@@ -91,6 +91,28 @@ au FileType javascript,java,c,cpp exe ReturnReplace()
 au FileType php,javascript,java,c,cpp,python,vim exe LineLength()
 au FileType javascript,python,vim set expandtab
 
+func! CompileC()
+    :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').
+\            ' -o '.shellescape('%:r')<CR>
+    :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').
+\            ' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+endf
+
+func! CompileCPP()
+    :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+\            ' -o '.shellescape('%:r')<CR>
+    :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+\            ' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+endf
+
+func! RunPython()
+    :nnoremap <F9> :w<bar>exec '!python '.shellescape('%')<CR>
+endf
+
+au FileType c exe CompileC()
+au FileType cpp exe CompileCPP()
+au FileType python exe RunPython()
+
 if has ('gui_running')
     set mouse=a
     set cursorline
