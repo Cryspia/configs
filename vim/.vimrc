@@ -98,7 +98,7 @@ func! CompileC()
         :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
 \               shellescape('%:r.exe')<CR>
         :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-\               shellescape('%:r.exe').' && ./'.shellescape('%:r.exe')<CR>
+\               shellescape('%:r.exe').' && '.shellescape('%:r.exe')<CR>
     else
         :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
 \               shellescape('%:r')<CR>
@@ -112,7 +112,7 @@ func! CompileCPP()
         :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
 \               ' -o '.shellescape('%:r.exe')<CR>
         :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\               ' -o '.shellescape('%:r.exe').' && ./'.shellescape('%:r.exe')
+\               ' -o '.shellescape('%:r.exe').' && '.shellescape('%:r.exe')
 \               <CR>
     else
         :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
