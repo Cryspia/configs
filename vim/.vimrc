@@ -17,7 +17,7 @@ set showmatch
 syntax on
 
 "-------------------------------------------------------------------------------
-if has('win32')
+if has ('win32')
 	set backspace=2
 endif
 
