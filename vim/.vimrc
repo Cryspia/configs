@@ -17,6 +17,11 @@ set showmatch
 syntax on
 
 "-------------------------------------------------------------------------------
+if has('win32')
+	set backspace=2
+endif
+
+"-------------------------------------------------------------------------------
 func! CloseBracket(char)
     if getline('.')[col('.') - 1] == a:char
         return "\<RIGHT>"
