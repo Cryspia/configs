@@ -90,12 +90,12 @@ func! LineLength()
     endif
 endf
 
-au FileType php,javascript,java,c,cpp,python,vim exe InputBrackets()
-au FileType php,javascript,java,c,cpp,python,vim exe BackspaceReplace()
+au FileType php,javascript,java,c,cpp,python,vim,sh exe InputBrackets()
+au FileType php,javascript,java,c,cpp,python,vim,sh exe BackspaceReplace()
 au FileType javascript,java,c,cpp exe ReturnReplace()
 
-au FileType php,javascript,java,c,cpp,python,vim exe LineLength()
-au FileType javascript,python,vim set expandtab
+au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
+au FileType javascript,python,vim,sh set expandtab
 
 "-------------------------------------------------------------------------------
 func! CompileC()
