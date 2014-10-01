@@ -92,7 +92,7 @@ endf
 
 au FileType php,javascript,java,c,cpp,python,vim,sh exe InputBrackets()
 au FileType php,javascript,java,c,cpp,python,vim,sh exe BackspaceReplace()
-au FileType javascript,java,c,cpp exe ReturnReplace()
+au FileType javascript,java,c,cpp,sh exe ReturnReplace()
 
 au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
 au FileType javascript,python,vim,sh set expandtab
