@@ -141,6 +141,9 @@ au FileType python exe RunPython()
 au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
+:nnoremap * *N
+
+"-------------------------------------------------------------------------------
 if has ('gui_running')
     set mouse=a
     set cursorline
