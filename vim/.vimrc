@@ -131,9 +131,14 @@ func! RunPython()
     :nnoremap <F9> :w<bar>exec '!python '.shellescape('%')<CR>
 endf
 
+func! CtagsGenerate()
+    :nnoremap <S-F12> :!ctags -R –c++-kinds=+px –fields=+iaS –extra=+q .<CR>  
+endf
+
 au FileType c exe CompileC()
 au FileType cpp exe CompileCPP()
 au FileType python exe RunPython()
+au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
 if has ('gui_running')
