@@ -114,6 +114,7 @@ endf
 
 func! CompileCPP()
     if has ('win32')
+        rd
         :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
 \               ' -o '.shellescape('%:r.exe')<CR>
         :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
@@ -141,7 +142,22 @@ au FileType python exe RunPython()
 au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
-:nnoremap * *N
+func! WordSearch()
+    let l:before = col('.')
+    execute "normal! *N"
+    let l:after = col('.')
+    if l:before > l:after
+        return "\<ESC>*N".(l:before-l:after)."\<RIGHT>"
+    else
+        return "\<ESC>*N"
+    endif
+endf
+
+func! StarReplace()
+    :nnoremap * i<c-r>=WordSearch()<CR>
+endf
+
+exe StarReplace()
 
 "-------------------------------------------------------------------------------
 if has ('gui_running')
