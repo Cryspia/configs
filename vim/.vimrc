@@ -135,7 +135,7 @@ func! RunPython()
 endf
 
 func! CtagsGenerate()
-    :nnoremap <S-F12> :!ctags -R –c++-kinds=+px –fields=+iaS –extra=+q .<CR>  
+    :nnoremap <S-F12> :w<bar>:!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .<CR>  
 endf
 
 au FileType c exe CompileC()
