@@ -118,7 +118,6 @@ endf
 
 func! CompileCPP()
     if has ('win32')
-        rd
         :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
 \               ' -o '.shellescape('%:r.exe')<CR>
         :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
