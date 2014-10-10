@@ -1,6 +1,3 @@
-filetype on
-filetype plugin on
-
 set nu
 set ruler
 set tabstop=4
@@ -18,6 +15,7 @@ set hlsearch
 set magic
 set showmatch
 syntax on
+filetype indent plugin on
 
 "-------------------------------------------------------------------------------
 if has ('win32')
@@ -74,7 +72,7 @@ func! ReturnInBrackets()
     let l:pos = col(".")
     let l:line = getline(".")
     if l:line[l:pos - 2] == "{" && l:line[l:pos - 1] == "}"
-        return "\<RETURN>\<BS>\<RETURN>\<UP>\<TAB>"
+        return "\<RETURN>\<RETURN>\<UP>\<TAB>"
     else
         return "\<RETURN>"
     endif
