@@ -169,7 +169,7 @@ if has ('gui_running')
     set columns=86
     colorscheme darkblue
     if has("gui_gtk2")
-        set guifont=DejaVu\ Sans\ Mono\ 18
+        set guifont=DejaVu\ Sans\ Mono\ 12
     elseif has("gui_win32")
         set guifont=courier_new:h12
     endif
