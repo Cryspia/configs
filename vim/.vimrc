@@ -18,6 +18,22 @@ syntax on
 filetype indent plugin on
 
 "-------------------------------------------------------------------------------
+if has ('gui_running')
+    set mouse=a
+    set cursorline
+    set tabpagemax=9
+    set showtabline=2
+    set lines=25
+    set columns=86
+    colorscheme darkblue
+    if has("gui_gtk2")
+        set guifont=DejaVu\ Sans\ Mono\ 12
+    elseif has("gui_win32")
+        set guifont=courier_new:h12
+    endif
+endif
+
+"-------------------------------------------------------------------------------
 if has ('win32')
 	set backspace=2
 endif
@@ -160,17 +176,5 @@ endf
 exe StarReplace()
 
 "-------------------------------------------------------------------------------
-if has ('gui_running')
-    set mouse=a
-    set cursorline
-    set tabpagemax=9
-    set showtabline=2
-    set lines=25
-    set columns=86
-    colorscheme darkblue
-    if has("gui_gtk2")
-        set guifont=DejaVu\ Sans\ Mono\ 12
-    elseif has("gui_win32")
-        set guifont=courier_new:h12
-    endif
-endif
+highlight WhitespaceEOL guibg=#66ccff
+match WhitespaceEOL /\s\+$/
