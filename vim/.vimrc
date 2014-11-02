@@ -179,5 +179,5 @@ endf
 exe StarReplace()
 
 "-------------------------------------------------------------------------------
-highlight WhitespaceEOL guibg=#66ccff
+highlight WhitespaceEOL ctermbg=blue ctermfg=blue guibg=#66ccff
 match WhitespaceEOL /\s\+$/
