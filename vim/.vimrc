@@ -149,7 +149,7 @@ func! RunPython()
 endf
 
 func! CtagsGenerate()
-    :nnoremap <S-F12> :w<bar>:!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .<CR>  
+    :nnoremap <S-F12> :w<bar>:!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .<CR>
 endf
 
 au FileType c exe CompileC()
@@ -159,13 +159,16 @@ au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
 func! WordSearch()
-    let l:before = col('.')
-    execute "normal! *N"
-    let l:after = col('.')
-    if l:before > l:after
-        return "\<ESC>*N".(l:before-l:after)."\<RIGHT>"
+    let l:c_before = col('.')
+    let l:l_before = line('.')
+    let l:top = line('w0')
+    execute "normal! *N".l:l_before."G"
+    let l:c_after = col('.')
+    if l:c_before > l:c_after
+        execute "normal! ".(l:c_before-l:c_after)."\<RIGHT>"
+        return "\<ESC>*N".l:top."zt".l:l_before."G".(l:c_before-l:c_after)."\<RIGHT>"
     else
-        return "\<ESC>*N"
+        return "\<ESC>*N".l:top."zt".l:l_before."G"
     endif
 endf
 
