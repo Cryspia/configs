@@ -14,12 +14,12 @@ set completeopt=longest,menu
 set hlsearch
 set magic
 set showmatch
+set mouse=a
 syntax on
 filetype indent plugin on
 
 "-------------------------------------------------------------------------------
 if has ('gui_running')
-    set mouse=a
     set cursorline
     set tabpagemax=9
     set showtabline=2
@@ -162,7 +162,7 @@ func! WordSearch()
     let l:c_before = col('.')
     let l:l_before = line('.')
     let l:top = line('w0')
-    execute "normal! *N".l:l_before."G"
+    execute "normal! ".l:l_before."G"
     let l:c_after = col('.')
     if l:c_before > l:c_after
         execute "normal! ".(l:c_before-l:c_after)."\<RIGHT>"
