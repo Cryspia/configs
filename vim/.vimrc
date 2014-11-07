@@ -1,24 +1,35 @@
+filetype indent plugin on
+syntax on
+
+let mapleader = "\\"
+
 set nu
 set ruler
+
+set nobackup
+set noswapfile
+set nowritebackup
+
+set autoindent
+set smartindent
+
+set complete=.,w,b,k,t,i
+set completeopt=longest,menu
+
+set hlsearch
+set magic
+set showmatch
+
+set mouse=a
+
 set tabstop=4
 set smarttab
 set shiftwidth=4
 set softtabstop=4
-set nobackup
-set noswapfile
-set nowritebackup
-set autoindent
-set smartindent
-set complete=.,w,b,k,t,i
-set completeopt=longest,menu
-set hlsearch
-set magic
-set showmatch
-set mouse=a
-syntax on
-filetype indent plugin on
+au FileType javascript,python,vim,sh set expandtab
 
 "-------------------------------------------------------------------------------
+"GUI settings
 if has ('gui_running')
     set cursorline
     set tabpagemax=9
@@ -34,14 +45,22 @@ if has ('gui_running')
 endif
 
 "-------------------------------------------------------------------------------
+"Windows backspace fix
 if has ('win32')
 	set backspace=2
 endif
 
 "-------------------------------------------------------------------------------
-vnoremap p "_dP
+"No-yanking cut
+vnoremap <leader>x "_x
+vnoremap <leader>X "_X
+vnoremap <leader>d "_d
+vnoremap <leader>D "_D
+vnoremap <leader>p "_dp
+vnoremap <leader>P "_dP
 
 "-------------------------------------------------------------------------------
+"Brackets matching
 func! CloseBracket(char)
     if getline('.')[col('.') - 1] == a:char
         return "\<RIGHT>"
@@ -101,6 +120,13 @@ func! ReturnReplace()
     :inoremap <RETURN> <c-r>=ReturnInBrackets()<CR>
 endf
 
+au FileType php,javascript,java,c,cpp,python,vim,sh exe InputBrackets()
+au FileType php,javascript,java,c,cpp,python,vim,sh exe BackspaceReplace()
+au FileType javascript,java,c,cpp,sh exe ReturnReplace()
+
+
+"-------------------------------------------------------------------------------
+"Mark 80th column
 func! LineLength()
     if exists('+colorcolumn')
         set colorcolumn=80
@@ -110,14 +136,10 @@ func! LineLength()
     endif
 endf
 
-au FileType php,javascript,java,c,cpp,python,vim,sh exe InputBrackets()
-au FileType php,javascript,java,c,cpp,python,vim,sh exe BackspaceReplace()
-au FileType javascript,java,c,cpp,sh exe ReturnReplace()
-
 au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
-au FileType javascript,python,vim,sh set expandtab
 
 "-------------------------------------------------------------------------------
+"Compiler/ctags call
 func! CompileC()
     if has ('win32')
         :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
@@ -161,6 +183,7 @@ au FileType python exe RunPython()
 au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
+"Current word search/replace
 func! WordSearch()
     let l:c_before = col('.')
     let l:l_before = line('.')
@@ -175,12 +198,10 @@ func! WordSearch()
     endif
 endf
 
-func! StarReplace()
-    :nnoremap * i<c-r>=WordSearch()<CR>
-endf
-
-exe StarReplace()
+:nnoremap <leader>s i<c-r>=WordSearch()<CR>
+:nnoremap <leader>r :%s/\<<c-r><c-w>\>//gc<Left><Left><Left>
 
 "-------------------------------------------------------------------------------
+"Mark out EOL whitespace
 highlight WhitespaceEOL ctermbg=blue ctermfg=blue guibg=#66ccff
 match WhitespaceEOL /\s\+$/
