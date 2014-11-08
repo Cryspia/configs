@@ -143,29 +143,29 @@ au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
 func! CompileC()
     if has ('win32')
         :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-\               shellescape('%:r.exe')<CR>
+                    \shellescape('%:r.exe')<CR>
         :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-\               shellescape('%:r.exe').' && '.shellescape('%:r.exe')<CR>
+                    \shellescape('%:r.exe').' && '.shellescape('%:r.exe')<CR>
     else
         :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-\               shellescape('%:r')<CR>
+                    \shellescape('%:r')<CR>
         :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-\               shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+                    \shellescape('%:r').' && ./'.shellescape('%:r')<CR>
     endif
 endf
 
 func! CompileCPP()
     if has ('win32')
         :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\               ' -o '.shellescape('%:r.exe')<CR>
+                    \' -o '.shellescape('%:r.exe')<CR>
         :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\               ' -o '.shellescape('%:r.exe').' && '.shellescape('%:r.exe')
-\               <CR>
+                    \' -o '.shellescape('%:r.exe').' && '.shellescape('%:r.exe')
+                    \<CR>
     else
         :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\               ' -o '.shellescape('%:r')<CR>
+                    \' -o '.shellescape('%:r')<CR>
         :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-\               ' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
+                    \' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
     endif
 endf
 
@@ -184,22 +184,31 @@ au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
 "Current word search/replace
-func! WordSearch()
+func! WordSearch(type)
+    if a:type == 0
+        let l:search = "\\\<\<c-r>\<c-w>\\\>"
+    else
+        let l:search = "\<c-r>m"
+    endif
     let l:c_before = col('.')
     let l:l_before = line('.')
     let l:top = line('w0')
     execute "normal! ".l:l_before."G"
     let l:c_after = col('.')
-    if l:c_before > l:c_after
-        execute "normal! ".(l:c_before-l:c_after)."\<RIGHT>"
-        return "\<ESC>*N".l:top."zt".l:l_before."G".(l:c_before-l:c_after)."\<RIGHT>"
+    let l:diff = l:c_before - l:c_after
+    if l:diff > 0
+        execute "normal! ".l:diff."\<RIGHT>"
+        return "\<ESC>/".l:search."\<RETURN>".l:top."zt".l:l_before."G".
+                    \l:diff."\<RIGHT>"
     else
-        return "\<ESC>*N".l:top."zt".l:l_before."G"
+        return "\<ESC>/".l:search."\<RETURN>".l:top."zt".l:l_before."G"
     endif
 endf
 
-:nnoremap <leader>s i<c-r>=WordSearch()<CR>
+:nnoremap <leader>s i<c-r>=WordSearch(0)<CR>
+:vnoremap <leader>s "myi<c-r>=WordSearch(1)<CR>
 :nnoremap <leader>r :%s/\<<c-r><c-w>\>//gc<Left><Left><Left>
+:vnoremap <leader>r "my:%s/<c-r>m//gc<Left><Left><Left>
 
 "-------------------------------------------------------------------------------
 "Mark out EOL whitespace
