@@ -37,9 +37,9 @@ if has ('gui_running')
     set lines=25
     set columns=86
     colorscheme darkblue
-    if has("gui_gtk2")
+    if has('gui_gtk2')
         set guifont=DejaVu\ Sans\ Mono\ 12
-    elseif has("gui_win32")
+    elseif has('gui_win32')
         set guifont=courier_new:h12
     endif
 endif
@@ -51,13 +51,30 @@ if has ('win32')
 endif
 
 "-------------------------------------------------------------------------------
+"Current word yank
+nnoremap <leader>y viwy
+
+"-------------------------------------------------------------------------------
 "No-yanking cut
+func! NoYankPaste()
+    let l:pos = col('.')
+    let l:len = strlen(getline('.'))
+    if l:pos > l:len && l:pos != 1
+        return "\<ESC>p"
+    else
+        return "\<ESC>P"
+    endif
+endf
+
 vnoremap <leader>x "_x
 vnoremap <leader>X "_X
+nnoremap <leader>x "_x
+nnoremap <leader>X "_X
 vnoremap <leader>d "_d
 vnoremap <leader>D "_D
-vnoremap <leader>p "_dp
-vnoremap <leader>P "_dP
+nnoremap <leader>d "_d
+nnoremap <leader>D "_D
+vnoremap <leader>p "_da<c-r>=NoYankPaste()<CR>
 
 "-------------------------------------------------------------------------------
 "Brackets matching
@@ -79,19 +96,19 @@ func! InputBrackets()
 endf
 
 func! RemoveBrackets()
-    let l:left = col(".")
-    let l:left_char = getline(".")[l:left - 2]
-    if index(["(", "[", "{"], l:left_char) == -1
+    let l:left = col('.')
+    let l:left_char = getline('.')[l:left - 2]
+    if index(['(', '[', '{'], l:left_char) == -1
         return "\<BS>"
     endif
 
-    let l:left_line = line(".")
+    let l:left_line = line('.')
     execute "normal! \<LEFT>%"
-    let l:right_line = line(".")
+    let l:right_line = line('.')
     if l:left_line != l:right_line
         execute "normal %"
     endif
-    let l:right = col(".")
+    let l:right = col('.')
     let l:distance = l:right - l:left
     if l:distance == -1
         return "\<RIGHT>\<BS>"
@@ -107,9 +124,9 @@ func! BackspaceReplace()
 endf
 
 func! ReturnInBrackets()
-    let l:pos = col(".")
-    let l:line = getline(".")
-    if l:line[l:pos - 2] == "{" && l:line[l:pos - 1] == "}"
+    let l:pos = col('.')
+    let l:line = getline('.')
+    if l:line[l:pos - 2] == '{' && l:line[l:pos - 1] == '}'
         return "\<RETURN>\<RETURN>\<UP>\<TAB>"
     else
         return "\<RETURN>"
@@ -193,15 +210,15 @@ func! WordSearch(type)
     let l:c_before = col('.')
     let l:l_before = line('.')
     let l:top = line('w0')
-    execute "normal! ".l:l_before."G"
+    execute "normal! ".l:l_before.'G'
     let l:c_after = col('.')
     let l:diff = l:c_before - l:c_after
     if l:diff > 0
         execute "normal! ".l:diff."\<RIGHT>"
-        return "\<ESC>/".l:search."\<RETURN>".l:top."zt".l:l_before."G".
+        return "\<ESC>/".l:search."\<RETURN>".l:top.'zt'.l:l_before.'G'.
                     \l:diff."\<RIGHT>"
     else
-        return "\<ESC>/".l:search."\<RETURN>".l:top."zt".l:l_before."G"
+        return "\<ESC>/".l:search."\<RETURN>".l:top.'zt'.l:l_before.'G'
     endif
 endf
 
