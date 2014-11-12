@@ -75,6 +75,7 @@ vnoremap <leader>D "_D
 nnoremap <leader>d "_d
 nnoremap <leader>D "_D
 vnoremap <leader>p "_da<c-r>=NoYankPaste()<CR>
+nnoremap <leader>p viw"_da<c-r>=NoYankPaste()<CR>
 
 "-------------------------------------------------------------------------------
 "Brackets matching
