@@ -26,7 +26,7 @@ set tabstop=4
 set smarttab
 set shiftwidth=4
 set softtabstop=4
-au FileType javascript,python,vim,sh set expandtab
+au FileType javascript,java,c,cpp,python,vim,sh set expandtab
 
 "-------------------------------------------------------------------------------
 "GUI settings
