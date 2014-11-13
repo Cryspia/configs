@@ -1,7 +1,7 @@
 filetype indent plugin on
 syntax on
 
-let mapleader = "\\"
+let mapleader = '\'
 
 set nu
 set ruler
@@ -56,13 +56,35 @@ nnoremap <leader>y viwy
 
 "-------------------------------------------------------------------------------
 "No-yanking cut
-func! NoYankPaste()
-    let l:pos = col('.')
+func! NoYankPaste(prefix)
+    let l:beof = line('$')
+    let l:blne = line("'<")
+    let l:bpos = col("'<")
+    let l:elne = line("'>")
+    let l:epos = col("'>")
+    let l:elen = strlen(getline("'>"))
+    normal! gv"_d
+    let l:aeof = line('$')
+    let l:apos = col('.')
     let l:len = strlen(getline('.'))
-    if l:pos > l:len && l:pos != 1
-        return "\<ESC>p"
+    if (l:blne != l:elne) && (l:bpos > 1) && (l:epos != l:elen)
+        execute "normal! i\<RETURN>\<ESC>\<UP>"
+        let l:ulen = strlen(getline('.'))
+        execute "normal! \<DOWN>0"
+        let l:dlen = strlen(getline('.'))
+        let l:diff = l:ulen + l:dlen - l:len
+        if l:diff == 1
+            normal! v"_d
+        elseif l:diff > 1
+            execute "normal! v".(l:diff - 1)."\<RIGHT>\"_d"
+        endif
+        execute 'normal! '.a:prefix.'P'
+    elseif (l:beof == l:aeof && l:apos == l:len && l:bpos > l:apos) ||
+                \(l:beof > l:aeof && l:apos == l:len && l:len > 1) ||
+                \(l:beof > l:aeof && l:blne > l:aeof)
+        normal! p
     else
-        return "\<ESC>P"
+        execute 'normal! '.a:prefix.'P'
     endif
 endf
 
@@ -74,8 +96,10 @@ vnoremap <leader>d "_d
 vnoremap <leader>D "_D
 nnoremap <leader>d "_d
 nnoremap <leader>D "_D
-vnoremap <leader>p "_da<c-r>=NoYankPaste()<CR>
-nnoremap <leader>p viw"_da<c-r>=NoYankPaste()<CR>
+vnoremap <silent> <leader>p :<c-u>call NoYankPaste('')<CR>
+nnoremap <silent> <leader>p viw:<c-u>call NoYankPaste('')<CR>
+vnoremap <silent> <leader>gp :<c-u>call NoYankPaste('g')<CR>
+nnoremap <silent> <leader>gp viw:<c-u>call NoYankPaste('g')<CR>
 
 "-------------------------------------------------------------------------------
 "Brackets matching
@@ -107,7 +131,7 @@ func! RemoveBrackets()
     execute "normal! \<LEFT>%"
     let l:right_line = line('.')
     if l:left_line != l:right_line
-        execute "normal %"
+        normal %
     endif
     let l:right = col('.')
     let l:distance = l:right - l:left
