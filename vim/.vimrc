@@ -67,7 +67,8 @@ func! NoYankPaste(prefix)
     let l:aeof = line('$')
     let l:apos = col('.')
     let l:len = strlen(getline('.'))
-    if (l:blne != l:elne) && (l:bpos > 1) && (l:epos != l:elen)
+    if (l:blne != l:elne) && (l:bpos > 1) && (l:epos != l:elen) &&
+                \(visualmode() != "\<c-v>")
         execute "normal! i\<RETURN>\<ESC>\<UP>"
         let l:ulen = strlen(getline('.'))
         execute "normal! \<DOWN>0"
