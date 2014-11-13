@@ -254,6 +254,38 @@ endf
 :vnoremap <leader>r "my:%s/<c-r>m//gc<Left><Left><Left>
 
 "-------------------------------------------------------------------------------
+"Force indent
+func! ForceIndent()
+    let l:pos = col('.')
+    normal ^
+    let l:head = col('.')
+    let l:pos = l:pos - l:head
+    if (l:pos < 0)
+        let l:pos = 0
+    endif
+    if l:head != 1
+        execute "normal! \<LEFT>v0\"_d"
+    endif
+    execute "normal \<UP>"
+    let l:line = getline('.')
+    execute "normal \<DOWN>"
+    let l:i = 0
+    while (l:line[l:i] == ' ') || (l:line[l:i] == "\<TAB>")
+        execute "normal! i".l:line[l:i]."\<ESC>\<RIGHT>"
+        let l:i += 1
+    endwhile
+    if (strlen(l:line) > 0)
+        execute "normal! i\<TAB>\<ESC>\<RIGHT>"
+    endif
+    if (l:pos > 0)
+        execute "normal! ".l:pos."\<RIGHT>"
+    endif
+    return ""
+endf
+
+:nnoremap <silent> <S-TAB> :call ForceIndent()<CR>
+:inoremap <S-TAB> <c-r>=ForceIndent()<CR>
+"-------------------------------------------------------------------------------
 "Mark out EOL whitespace
 highlight WhitespaceEOL ctermbg=blue ctermfg=blue guibg=#66ccff
 match WhitespaceEOL /\s\+$/
