@@ -257,6 +257,10 @@ endf
 "Force indent
 func! ForceIndent()
     let l:pos = col('.')
+    let l:return = ""
+    if l:pos > strlen(getline('.'))
+        let l:return = "\<RIGHT>"
+    endif
     normal ^
     let l:head = col('.')
     let l:pos = l:pos - l:head
@@ -280,7 +284,7 @@ func! ForceIndent()
     if (l:pos > 0)
         execute "normal! ".l:pos."\<RIGHT>"
     endif
-    return ""
+    return l:return
 endf
 
 :nnoremap <silent> <S-TAB> :call ForceIndent()<CR>
