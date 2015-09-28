@@ -183,33 +183,32 @@ au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
 
 "-------------------------------------------------------------------------------
 "Compiler/ctags call
+if has ('win32')
+    let g:cpe = '.exe'
+    let g:dirPrefix = ''
+else
+    let g:cpe = ''
+    let g:dirPrefix = './'
+endif
+
 func! CompileC()
-    if has ('win32')
-        nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-                    \shellescape('%:r.exe')<CR>
-        nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-                    \shellescape('%:r.exe').' && '.shellescape('%:r.exe')<CR>
-    else
-        nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-                    \shellescape('%:r')<CR>
-        nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
-                    \shellescape('%:r').' && ./'.shellescape('%:r')<CR>
-    endif
+    let g:cpb = '-Wall -o'
+    let g:cpa = ''
+    nnoremap <F9> :w<bar>exec '!gcc '.g:cpb.' '.shellescape('%:r'.g:cpe).' '.
+                \shellescape('%').' '.g:cpa<CR>
+    nnoremap <F10> :w<bar>exec '!gcc '.g:cpb.' '.shellescape('%:r'.g:gpe).
+                \' '.shellescape('%').' '.g:cpa.' && '.g:dirPrefix.
+                \shellescape('%:r'.g:cpe)<CR>
 endf
 
 func! CompileCPP()
-    if has ('win32')
-        nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-                    \' -o '.shellescape('%:r.exe')<CR>
-        nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-                    \' -o '.shellescape('%:r.exe').' && '.shellescape('%:r.exe')
-                    \<CR>
-    else
-        nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-                    \' -o '.shellescape('%:r')<CR>
-        nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
-                    \' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
-    endif
+    let g:cpb = '-Wall -o'
+    let g:cpa = ''
+    nnoremap <F9> :w<bar>exec '!g++ --std=c++11 '.g:cpb.' '.
+                \shellescape('%:r'.g:cpe).' '.shellescape('%').' '.g:cpa<CR>
+    nnoremap <F10> :w<bar>exec '!g++ --std=c++11 '.g:cpb.' '.
+                \shellescape('%:r'.g:cpe).' '.shellescape('%').' '.g:cpa.
+                \' && '.g:dirPrefix.shellescape('%:r'.g:cpe)<CR>
 endf
 
 func! RunPython()
