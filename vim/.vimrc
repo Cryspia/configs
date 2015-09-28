@@ -113,12 +113,12 @@ func! CloseBracket(char)
 endf
 
 func! InputBrackets()
-    :inoremap ( ()<LEFT>
-    :inoremap { {}<LEFT>
-    :inoremap [ []<LEFT>
-    :inoremap ) <c-r>=CloseBracket(')')<CR>
-    :inoremap } <c-r>=CloseBracket('}')<CR>
-    :inoremap ] <c-r>=CloseBracket(']')<CR>
+    inoremap ( ()<LEFT>
+    inoremap { {}<LEFT>
+    inoremap [ []<LEFT>
+    inoremap ) <c-r>=CloseBracket(')')<CR>
+    inoremap } <c-r>=CloseBracket('}')<CR>
+    inoremap ] <c-r>=CloseBracket(']')<CR>
 endf
 
 func! RemoveBrackets()
@@ -146,7 +146,7 @@ func! RemoveBrackets()
 endf
 
 func! BackspaceReplace()
-    :inoremap <BS> <c-r>=RemoveBrackets()<CR>
+    inoremap <BS> <c-r>=RemoveBrackets()<CR>
 endf
 
 func! ReturnInBrackets()
@@ -160,7 +160,7 @@ func! ReturnInBrackets()
 endf
 
 func! ReturnReplace()
-    :inoremap <RETURN> <c-r>=ReturnInBrackets()<CR>
+    inoremap <RETURN> <c-r>=ReturnInBrackets()<CR>
 endf
 
 au FileType php,javascript,java,c,cpp,python,vim,sh exe InputBrackets()
@@ -185,39 +185,39 @@ au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
 "Compiler/ctags call
 func! CompileC()
     if has ('win32')
-        :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+        nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
                     \shellescape('%:r.exe')<CR>
-        :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+        nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
                     \shellescape('%:r.exe').' && '.shellescape('%:r.exe')<CR>
     else
-        :nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+        nnoremap <F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
                     \shellescape('%:r')<CR>
-        :nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
+        nnoremap <S-F9> :w<bar>exec '!gcc -Wall '.shellescape('%').' -o '.
                     \shellescape('%:r').' && ./'.shellescape('%:r')<CR>
     endif
 endf
 
 func! CompileCPP()
     if has ('win32')
-        :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+        nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
                     \' -o '.shellescape('%:r.exe')<CR>
-        :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+        nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
                     \' -o '.shellescape('%:r.exe').' && '.shellescape('%:r.exe')
                     \<CR>
     else
-        :nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+        nnoremap <F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
                     \' -o '.shellescape('%:r')<CR>
-        :nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
+        nnoremap <S-F9> :w<bar>exec '!g++ --std=c++11 -Wall '.shellescape('%').
                     \' -o '.shellescape('%:r').' && ./'.shellescape('%:r')<CR>
     endif
 endf
 
 func! RunPython()
-    :nnoremap <F9> :w<bar>exec '!python '.shellescape('%')<CR>
+    nnoremap <F9> :w<bar>exec '!python '.shellescape('%')<CR>
 endf
 
 func! CtagsGenerate()
-    :nnoremap <F12> :w<bar>:!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .<CR>
+    nnoremap <F12> :w<bar>:!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .<CR>
 endf
 
 au FileType c exe CompileC()
@@ -248,10 +248,10 @@ func! WordSearch(type)
     endif
 endf
 
-:nnoremap <leader>s i<c-r>=WordSearch(0)<CR>
-:vnoremap <leader>s "myi<c-r>=WordSearch(1)<CR>
-:nnoremap <leader>r :%s/\<<c-r><c-w>\>//gc<Left><Left><Left>
-:vnoremap <leader>r "my:%s/<c-r>m//gc<Left><Left><Left>
+nnoremap <leader>s i<c-r>=WordSearch(0)<CR>
+vnoremap <leader>s "myi<c-r>=WordSearch(1)<CR>
+nnoremap <leader>r :%s/\<<c-r><c-w>\>//gc<Left><Left><Left>
+vnoremap <leader>r "my:%s/<c-r>m//gc<Left><Left><Left>
 
 "-------------------------------------------------------------------------------
 "Force indent
@@ -287,9 +287,42 @@ func! ForceIndent()
     return l:return
 endf
 
-:nnoremap <silent> <S-TAB> :call ForceIndent()<CR>
-:inoremap <S-TAB> <c-r>=ForceIndent()<CR>
+nnoremap <silent> <S-TAB> :call ForceIndent()<CR>
+inoremap <S-TAB> <c-r>=ForceIndent()<CR>
+
 "-------------------------------------------------------------------------------
 "Mark out EOL whitespace
 highlight WhitespaceEOL ctermbg=blue ctermfg=blue guibg=#66ccff
 match WhitespaceEOL /\s\+$/
+
+"-------------------------------------------------------------------------------
+"Add special library tags
+func! TagsDetection()
+    let l:fileName = "~/.vim/".&filetype.".tags"
+    if filereadable(glob(l:fileName))
+        execute "set tags+=".l:fileName
+    endif
+endf
+
+au FileType cpp exe TagsDetection()
+set tags+=./../tags,./../../tags,./../../../tags,./../../../../tags
+
+"-------------------------------------------------------------------------------
+"Move UP/DOWN in a long line
+func! LongLineMove(char)
+    if &wrap
+        return "g".a:char
+    else
+        return a:char
+    endif
+endf
+onoremap <silent> <expr> j LongLineMove("j")
+onoremap <silent> <expr> k LongLineMove("k")
+onoremap <silent> <expr> <UP> LongLineMove("\<UP>")
+onoremap <silent> <expr> <DOWN> LongLineMove("\<DOWN>")
+nnoremap <silent> <expr> j LongLineMove("j")
+nnoremap <silent> <expr> k LongLineMove("k")
+nnoremap <silent> <expr> <UP> LongLineMove("\<UP>")
+nnoremap <silent> <expr> <DOWN> LongLineMove("\<DOWN>")
+inoremap <Up> <C-o>g<Up>
+inoremap <Down> <C-o>g<Down>
