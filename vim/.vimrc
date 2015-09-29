@@ -325,3 +325,8 @@ nnoremap <silent> <expr> <UP> LongLineMove("\<UP>")
 nnoremap <silent> <expr> <DOWN> LongLineMove("\<DOWN>")
 inoremap <Up> <C-o>g<Up>
 inoremap <Down> <C-o>g<Down>
+
+"-------------------------------------------------------------------------------
+"Keep selection after shift indent
+vnoremap < <gv
+vnoremap > >gv
