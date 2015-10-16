@@ -213,6 +213,7 @@ endf
 
 func! RunPython()
     nnoremap <F9> :w<bar>exec '!python '.shellescape('%')<CR>
+    nnoremap <F10> :w<bar>exec '!python3 '.shellescape('%')<CR>
 endf
 
 func! CtagsGenerate()
