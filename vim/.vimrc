@@ -112,10 +112,20 @@ func! CloseBracket(char)
     endif
 endf
 
+func! CompleteBracket(char)
+    let l:this = getline('.')[col('.')]
+    if (l:this == ' ' || l:this == '\n' || l:this =='}' || l:this == ']' || l:this == ')' || l:this == "'" || l:this == '"' || l:this == '?' || l:this == ':')
+        return a:char."\<LEFT>"
+    else
+        return ''
+    endif
+endf
+
+
 func! InputBrackets()
-    inoremap ( ()<LEFT>
-    inoremap { {}<LEFT>
-    inoremap [ []<LEFT>
+    inoremap ( (<c-r>=CompleteBracket(')')<CR>
+    inoremap { {<c-r>=CompleteBracket('}')<CR>
+    inoremap [ [<c-r>=CompleteBracket(']')<CR>
     inoremap ) <c-r>=CloseBracket(')')<CR>
     inoremap } <c-r>=CloseBracket('}')<CR>
     inoremap ] <c-r>=CloseBracket(']')<CR>
