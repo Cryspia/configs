@@ -113,14 +113,22 @@ func! CloseBracket(char)
 endf
 
 func! CompleteBracket(char)
-    let l:this = getline('.')[col('.')]
-    if (l:this == ' ' || l:this == '\n' || l:this =='}' || l:this == ']' || l:this == ')' || l:this == "'" || l:this == '"' || l:this == '?' || l:this == ':')
-        return a:char."\<LEFT>"
-    else
+    let l:this = getline('.')[col('.') - 1]
+    let l:num = char2nr(l:this)
+    if (l:num >= 48 && l:num <= 57) || (l:num >= 65 && l:num <= 90) || (l:num >= 96 && l:num <= 122) || l:this =='{' || l:this == '[' || l:this == '(' || l:this == '"' || l:this == "'" || l:this == '`'
         return ''
+    else
+        return a:char."\<LEFT>"
     endif
 endf
 
+func! CloseQuota(char)
+    if getline('.')[col('.') - 1] == a:char
+        return "\<RIGHT>"
+    else
+        return a:char.CompleteBracket(a:char)
+    endif
+endf
 
 func! InputBrackets()
     inoremap ( (<c-r>=CompleteBracket(')')<CR>
@@ -129,6 +137,8 @@ func! InputBrackets()
     inoremap ) <c-r>=CloseBracket(')')<CR>
     inoremap } <c-r>=CloseBracket('}')<CR>
     inoremap ] <c-r>=CloseBracket(']')<CR>
+    inoremap ' <c-r>=CloseQuota("'")<CR>
+    inoremap " <c-r>=CloseQuota('"')<CR>
 endf
 
 func! RemoveBrackets()
