@@ -112,10 +112,11 @@ func! CloseBracket(char)
     endif
 endf
 
-func! CompleteBracket(char)
+func! CompleteBracket(char, shift)
     let l:this = getline('.')[col('.') - 1]
+    let l:prev = getline('.')[col('.') - 3 + a:shift]
     let l:num = char2nr(l:this)
-    if (l:num >= 48 && l:num <= 57) || (l:num >= 65 && l:num <= 90) || (l:num >= 96 && l:num <= 122) || l:this =='{' || l:this == '[' || l:this == '(' || l:this == '"' || l:this == "'" || l:this == '`'
+    if (l:num >= 48 && l:num <= 57) || (l:num >= 65 && l:num <= 90) || (l:num >= 96 && l:num <= 122) || l:this =='{' || l:this == '[' || l:this == '(' || l:this == '"' || l:this == "'" || l:this == '`' || (col('.') > 2-a:shift && l:prev == '\')
         return ''
     else
         return a:char."\<LEFT>"
@@ -126,14 +127,14 @@ func! CloseQuota(char)
     if getline('.')[col('.') - 1] == a:char
         return "\<RIGHT>"
     else
-        return a:char.CompleteBracket(a:char)
+        return a:char.CompleteBracket(a:char, 1)
     endif
 endf
 
 func! InputBrackets()
-    inoremap ( (<c-r>=CompleteBracket(')')<CR>
-    inoremap { {<c-r>=CompleteBracket('}')<CR>
-    inoremap [ [<c-r>=CompleteBracket(']')<CR>
+    inoremap ( (<c-r>=CompleteBracket(')', 0)<CR>
+    inoremap { {<c-r>=CompleteBracket('}', 0)<CR>
+    inoremap [ [<c-r>=CompleteBracket(']', 0)<CR>
     inoremap ) <c-r>=CloseBracket(')')<CR>
     inoremap } <c-r>=CloseBracket('}')<CR>
     inoremap ] <c-r>=CloseBracket(']')<CR>
@@ -141,32 +142,35 @@ func! InputBrackets()
     inoremap " <c-r>=CloseQuota('"')<CR>
 endf
 
-func! RemoveBrackets()
+func! RemoveMatch()
     let l:left = col('.')
     let l:left_char = getline('.')[l:left - 2]
-    if index(['(', '[', '{'], l:left_char) == -1
-        return "\<BS>"
-    endif
-
-    let l:left_line = line('.')
-    execute "normal! \<LEFT>%"
-    let l:right_line = line('.')
-    if l:left_line != l:right_line
-        normal %
-    endif
-    let l:right = col('.')
-    let l:distance = l:right - l:left
-    if l:distance == -1
-        return "\<RIGHT>\<BS>"
-    elseif l:distance == 0
+    let l:right_char = getline('.')[l:left - 1]
+    if index(['(', '[', '{'], l:left_char) != -1
+        let l:left_line = line('.')
+        execute "normal! \<LEFT>%"
+        let l:right_line = line('.')
+        if l:left_line != l:right_line
+            normal %
+        endif
+        let l:right = col('.')
+        let l:distance = l:right - l:left
+        if l:distance == -1
+            return "\<RIGHT>\<BS>"
+        elseif l:distance == 0
+            return "\<RIGHT>\<BS>\<BS>"
+        else
+            return "\<RIGHT>\<BS>\<ESC>".l:distance."\<LEFT>a\<BS>"
+        endif
+    elseif l:left_char == l:right_char && index(['"', "'"], l:left_char) != -1
         return "\<RIGHT>\<BS>\<BS>"
     else
-        return "\<RIGHT>\<BS>\<ESC>".l:distance."\<LEFT>a\<BS>"
+        return "\<BS>"
     endif
 endf
 
 func! BackspaceReplace()
-    inoremap <BS> <c-r>=RemoveBrackets()<CR>
+    inoremap <BS> <c-r>=RemoveMatch()<CR>
 endf
 
 func! ReturnInBrackets()
