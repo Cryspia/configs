@@ -22,11 +22,16 @@ set showmatch
 
 set mouse=a
 
-set tabstop=4
 set smarttab
-set shiftwidth=4
-set softtabstop=4
-au FileType javascript,java,c,cpp,python,vim,sh set expandtab
+au FileType javascript,html,java,c,cpp,python,vim,sh set expandtab
+
+func! LengthTab(tabL)
+    execute 'set tabstop='.a:tabL
+    execute 'set shiftwidth='.a:tabL
+    execute 'set softtabstop='.a:tabL
+endf
+call LengthTab(4)
+au FileType javascript,html exe LengthTab(2)
 
 "-------------------------------------------------------------------------------
 "GUI settings
