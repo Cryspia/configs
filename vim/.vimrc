@@ -225,7 +225,7 @@ func! CompileC()
     let g:cpa = ''
     nnoremap <F9> :w<bar>exec '!gcc '.g:cpb.' '.shellescape('%:r'.g:cpe).' '.
                 \shellescape('%').' '.g:cpa<CR>
-    nnoremap <F10> :w<bar>exec '!gcc '.g:cpb.' '.shellescape('%:r'.g:gpe).
+    nnoremap <F10> :w<bar>exec '!gcc '.g:cpb.' '.shellescape('%:r'.g:cpe).
                 \' '.shellescape('%').' '.g:cpa.' && '.g:dirPrefix.
                 \shellescape('%:r'.g:cpe)<CR>
 endf
