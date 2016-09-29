@@ -250,7 +250,12 @@ endf
 
 func! CompileTEX()
     nnoremap <F9> :w<bar>exec '!xelatex -halt-on-error '.shellescape('%')<CR>
-    nnoremap <F10> :w<bar>exec '!pdflatex -halt-on-error '.shellescape('%')<CR>
+    nnoremap <F10> :w<bar>exec '!bibtex '.shellescape('%:r')<CR>
+    nnoremap <F12> :w<bar>exec '!xelatex -halt-on-error '.shellescape('%').
+                \' && '.'bibtex '.shellescape('%:r').
+                \' && '.'xelatex -halt-on-error '.shellescape('%').
+                \' && '.'xelatex -halt-on-error '.shellescape('%').
+                \' && '.'rm -f '.shellescape('%:r').'.{log,blg,bbl,aux}'<CR>
 endf
 
 func! CtagsGenerate()
