@@ -50,9 +50,12 @@ if has ('gui_running')
 endif
 
 "-------------------------------------------------------------------------------
-"Windows backspace fix
+"Windows/Mac backspace fix
 if has ('win32')
 	set backspace=2
+endif
+if has ('unix')
+    set backspace=indent,eol,start
 endif
 
 "-------------------------------------------------------------------------------
@@ -192,8 +195,8 @@ func! ReturnReplace()
     inoremap <RETURN> <c-r>=ReturnInBrackets()<CR>
 endf
 
-au FileType php,javascript,java,c,cpp,python,vim,sh exe InputBrackets()
-au FileType php,javascript,java,c,cpp,python,vim,sh exe BackspaceReplace()
+au FileType php,html,javascript,java,c,cpp,python,vim,sh,tex exe InputBrackets()
+au FileType php,html,javascript,java,c,cpp,python,vim,sh,tex exe BackspaceReplace()
 au FileType javascript,java,c,cpp,sh exe ReturnReplace()
 
 
@@ -245,6 +248,11 @@ func! RunPython()
     nnoremap <F10> :w<bar>exec '!python3 '.shellescape('%')<CR>
 endf
 
+func! CompileTEX()
+    nnoremap <F9> :w<bar>exec '!xelatex -halt-on-error '.shellescape('%')<CR>
+    nnoremap <F10> :w<bar>exec '!pdflatex -halt-on-error '.shellescape('%')<CR>
+endf
+
 func! CtagsGenerate()
     nnoremap <F12> :w<bar>:!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .<CR>
 endf
@@ -252,6 +260,7 @@ endf
 au FileType c exe CompileC()
 au FileType cpp exe CompileCPP()
 au FileType python exe RunPython()
+au FileType tex exe CompileTEX()
 au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
 
 "-------------------------------------------------------------------------------
@@ -353,6 +362,10 @@ nnoremap <silent> <expr> j LongLineMove("j")
 nnoremap <silent> <expr> k LongLineMove("k")
 nnoremap <silent> <expr> <UP> LongLineMove("\<UP>")
 nnoremap <silent> <expr> <DOWN> LongLineMove("\<DOWN>")
+vnoremap <silent> <expr> j LongLineMove("j")
+vnoremap <silent> <expr> k LongLineMove("k")
+vnoremap <silent> <expr> <UP> LongLineMove("\<UP>")
+vnoremap <silent> <expr> <DOWN> LongLineMove("\<DOWN>")
 inoremap <Up> <C-o>g<Up>
 inoremap <Down> <C-o>g<Down>
 
