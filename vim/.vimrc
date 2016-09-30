@@ -189,19 +189,22 @@ endf
 func! InputXMLgt()
     let l:pos = col('.')
     let l:line = getline('.')
-    if l:line[l:pos - 1] != '>' || l:pos == 1 ||
-                \index(['<', ' ', '/', '\\'], l:line[l:pos-2]) != -1
+    if l:line[l:pos - 1] != '>' || (l:pos > 1 &&
+                \index(['<', ' ', '/', '\\'], l:line[l:pos-2]) != -1)
         return '>'
     endif
+    let l:ln = line('.')
     normal %
     let l:lpos = col('.')
-    let l:num = char2nr(l:line[l:lpos])
-    if l:lpos == l:pos || !((l:num >= 65 && l:num <= 90) ||
-                \(l:num >= 96 && l:num <= 122) || (l:num >= 48 && l:num <= 57))
-        execute "normal! ".l:pos.'|'
+    let l:num = char2nr(getline('.')[l:lpos])
+    if (l:lpos == l:pos && l:ln == line('.')) || !((l:num >= 65 && l:num <= 90)
+                \|| (l:num >= 96 && l:num <= 122)
+                \|| (l:num >= 48 && l:num <= 57))
+        normal %
         return '>'
     endif
-    execute "normal! \<RIGHT>\<ESC>viw\"my".l:pos."|a</>\<ESC>\<LEFT>\"mp".l:pos.'|'
+    execute "normal! \<RIGHT>\<ESC>viw\"my".
+                \l:lpos."|%a</>\<ESC>\<LEFT>\"mp".l:pos.'|'
     return "\<RIGHT>"
 endf
 
@@ -227,21 +230,26 @@ func! ReturnReplace()
 endf
 
 func! ReturnAtEnd()
-    if col('.') <= strlen(getline('.'))
+    let l:opos = col('.')
+    let l:line = getline('.')
+    if l:opos <= strlen(l:line)
         return "\<RETURN>"
     endif
-    let l:chk = strpart(getline('.'),0,6)
+    let l:chk = strpart(l:line,0,6)
     if tolower(l:chk) != "\\begin"
         return "\<RETURN>"
     endif
-    execute "normal! \<ESC>7|vf{"
+    execute "normal! \<ESC>7|v"
+    if l:line[col('.')-1] != '{'
+        normal! f{
+    endif
     let l:pos = col('.')
+    let l:ln = line('.')
     normal %
-    if col('.') == l:pos
-        return "\<ESC>A\<RETURN>"
+    if col('.') == l:pos || line('.') != l:ln
+        return "\<ESC>%A\<RETURN>"
     else
-        let l:pos = col('.')
-        execute "normal! \"myA\\end\<ESC>\"mp".l:pos."|l"
+        execute "normal! \"myA\\end\<ESC>\"mp".l:opos."|"
         return "\<RETURN>\<RETURN>\<UP>"
     endif
 endf
