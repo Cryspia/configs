@@ -23,7 +23,7 @@ set showmatch
 set mouse=a
 
 set smarttab
-au FileType javascript,html,java,c,cpp,python,vim,sh set expandtab
+au FileType javascript,html,xml,java,c,cpp,python,vim,sh set expandtab
 
 func! LengthTab(tabL)
     execute 'set tabstop='.a:tabL
@@ -31,7 +31,7 @@ func! LengthTab(tabL)
     execute 'set softtabstop='.a:tabL
 endf
 call LengthTab(4)
-au FileType javascript,html exe LengthTab(2)
+au FileType javascript,html,xml exe LengthTab(2)
 
 "-------------------------------------------------------------------------------
 "GUI settings
@@ -121,10 +121,14 @@ func! CloseBracket(char)
 endf
 
 func! CompleteBracket(char, shift)
-    let l:this = getline('.')[col('.') - 1]
-    let l:prev = getline('.')[col('.') - 3 + a:shift]
+    let l:pos = col('.')
+    let l:this = getline('.')[l:pos - 1]
+    let l:prev = getline('.')[l:pos - 3 + a:shift]
     let l:num = char2nr(l:this)
-    if (l:num >= 48 && l:num <= 57) || (l:num >= 65 && l:num <= 90) || (l:num >= 96 && l:num <= 122) || l:this =='{' || l:this == '[' || l:this == '(' || l:this == '"' || l:this == "'" || l:this == '`' || (col('.') > 2-a:shift && l:prev == '\')
+    if ((l:num >= 48 && l:num <= 57) || (l:num >= 65 && l:num <= 90) ||
+                \(l:num >= 96 && l:num <= 122) ||
+                \index(['(', '[', '{', '"', "'", '`'], l:this) != -1 ||
+                \(l:pos > 2-a:shift && l:prev == '\'))
         return ''
     else
         return a:char."\<LEFT>"
@@ -150,7 +154,7 @@ func! InputBrackets()
     inoremap " <c-r>=CloseQuota('"')<CR>
 endf
 
-func! RemoveMatch()
+func! RemoveMatch(mode)
     let l:left = col('.')
     let l:left_char = getline('.')[l:left - 2]
     let l:right_char = getline('.')[l:left - 1]
@@ -170,7 +174,8 @@ func! RemoveMatch()
         else
             return "\<RIGHT>\<BS>\<ESC>".l:distance."\<LEFT>a\<BS>"
         endif
-    elseif l:left_char == l:right_char && index(['"', "'"], l:left_char) != -1
+    elseif (l:left_char == l:right_char && index(['"', "'"], l:left_char) != -1)
+                \|| (a:mode == 1 && l:left_char == '<' && l:right_char == '>')
         return "\<RIGHT>\<BS>\<BS>"
     else
         return "\<BS>"
@@ -178,7 +183,33 @@ func! RemoveMatch()
 endf
 
 func! BackspaceReplace()
-    inoremap <BS> <c-r>=RemoveMatch()<CR>
+    inoremap <BS> <c-r>=RemoveMatch(0)<CR>
+endf
+
+func! InputXMLgt()
+    let l:pos = col('.')
+    let l:line = getline('.')
+    if l:line[l:pos - 1] != '>' || l:pos == 1 ||
+                \index(['<', ' ', '/', '\\'], l:line[l:pos-2]) != -1
+        return '>'
+    endif
+    normal %
+    let l:lpos = col('.')
+    let l:num = char2nr(l:line[l:lpos])
+    if l:lpos == l:pos || !((l:num >= 65 && l:num <= 90) ||
+                \(l:num >= 96 && l:num <= 122) || (l:num >= 48 && l:num <= 57))
+        execute "normal! ".l:pos.'|'
+        return '>'
+    endif
+    execute "normal! \<RIGHT>\<ESC>viw\"my".l:pos."|a</>\<ESC>\<LEFT>\"mp".l:pos.'|'
+    return "\<RIGHT>"
+endf
+
+func! MatchXML()
+    exe InputBrackets()
+    inoremap < <<c-r>=CompleteBracket('>', 0)<CR>
+    inoremap > <c-r>=InputXMLgt()<CR>
+    inoremap <BS> <c-r>=RemoveMatch(1)<CR>
 endf
 
 func! ReturnInBrackets()
@@ -195,10 +226,37 @@ func! ReturnReplace()
     inoremap <RETURN> <c-r>=ReturnInBrackets()<CR>
 endf
 
-au FileType php,html,javascript,java,c,cpp,python,vim,sh,tex exe InputBrackets()
-au FileType php,html,javascript,java,c,cpp,python,vim,sh,tex exe BackspaceReplace()
-au FileType javascript,java,c,cpp,sh exe ReturnReplace()
+func! ReturnAtEnd()
+    if col('.') <= strlen(getline('.'))
+        return "\<RETURN>"
+    endif
+    let l:chk = strpart(getline('.'),0,6)
+    if tolower(l:chk) != "\\begin"
+        return "\<RETURN>"
+    endif
+    execute "normal! \<ESC>7|vf{"
+    let l:pos = col('.')
+    normal %
+    if col('.') == l:pos
+        return "\<ESC>A\<RETURN>"
+    else
+        let l:pos = col('.')
+        execute "normal! \"myA\\end\<ESC>\"mp".l:pos."|l"
+        return "\<RETURN>\<RETURN>\<UP>"
+    endif
+endf
 
+func! MatchSection()
+    inoremap <RETURN> <c-r>=ReturnAtEnd()<CR>
+endf
+
+au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
+            \ exe InputBrackets()
+au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
+            \ exe BackspaceReplace()
+au FileType html,xml exe MatchXML()
+au FileType javascript,java,c,cpp,sh exe ReturnReplace()
+au FileType plaintex,context,tex exe MatchSection()
 
 "-------------------------------------------------------------------------------
 "Mark 80th column
