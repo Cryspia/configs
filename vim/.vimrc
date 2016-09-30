@@ -125,8 +125,8 @@ func! CompleteBracket(char, shift)
     let l:this = getline('.')[l:pos - 1]
     let l:prev = getline('.')[l:pos - 3 + a:shift]
     let l:num = char2nr(l:this)
-    if ((l:num >= 48 && l:num <= 57) || (l:num >= 65 && l:num <= 90) ||
-                \(l:num >= 96 && l:num <= 122) ||
+    if ((l:num >= 48 && l:num <= 57) || (l:num >= 96 && l:num <= 122) ||
+                \(l:num >= 65 && l:num <= 90) ||
                 \index(['(', '[', '{', '"', "'", '`'], l:this) != -1 ||
                 \(l:pos > 2-a:shift && l:prev == '\'))
         return ''
@@ -197,8 +197,8 @@ func! InputXMLgt()
     normal %
     let l:lpos = col('.')
     let l:num = char2nr(getline('.')[l:lpos])
-    if (l:lpos == l:pos && l:ln == line('.')) || !((l:num >= 65 && l:num <= 90)
-                \|| (l:num >= 96 && l:num <= 122)
+    if (l:lpos == l:pos && l:ln == line('.')) || !((l:num >= 96 && l:num <= 122)
+                \|| (l:num >= 65 && l:num <= 90)
                 \|| (l:num >= 48 && l:num <= 57))
         normal %
         return '>'
@@ -232,11 +232,15 @@ endf
 func! ReturnAtEnd()
     let l:opos = col('.')
     let l:line = getline('.')
-    if l:opos <= strlen(l:line)
+    let l:len = strlen(l:line)
+    if l:opos <= l:len || l:len < 7
         return "\<RETURN>"
     endif
     let l:chk = strpart(l:line,0,6)
-    if tolower(l:chk) != "\\begin"
+    let l:num = char2nr(l:line[6])
+    if tolower(l:chk) != "\\begin" || (l:num >= 96 && l:num <= 122)
+                \|| (l:num >= 65 && l:num <= 90)
+                \|| (l:num >= 48 && l:num <= 57)
         return "\<RETURN>"
     endif
     execute "normal! \<ESC>7|v"
@@ -247,9 +251,11 @@ func! ReturnAtEnd()
     let l:ln = line('.')
     normal %
     if col('.') == l:pos || line('.') != l:ln
-        return "\<ESC>%A\<RETURN>"
+        normal %
+        execute "normal! \<ESC>$"
+        return "\<RIGHT>\<RETURN>"
     else
-        execute "normal! \"myA\\end\<ESC>\"mp".l:opos."|"
+        execute "normal! \"myA\\end\<ESC>\"mp".l:opos.'|'
         return "\<RETURN>\<RETURN>\<UP>"
     endif
 endf
