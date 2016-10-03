@@ -150,11 +150,15 @@ func! InputBrackets()
     inoremap ) <c-r>=CloseBracket(')')<CR>
     inoremap } <c-r>=CloseBracket('}')<CR>
     inoremap ] <c-r>=CloseBracket(']')<CR>
-    inoremap ' <c-r>=CloseQuota("'")<CR>
     inoremap " <c-r>=CloseQuota('"')<CR>
 endf
 
-func! RemoveMatch(mode)
+func! InputSingleQuota()
+    inoremap ' <c-r>=CloseQuota("'")<CR>
+endf
+
+"Not used any more. This function can seldom be of use and is too slow.
+func! OldRemoveMatch(mode)
     let l:left = col('.')
     let l:left_char = getline('.')[l:left - 2]
     let l:right_char = getline('.')[l:left - 1]
@@ -176,6 +180,21 @@ func! RemoveMatch(mode)
         endif
     elseif (l:left_char == l:right_char && index(['"', "'"], l:left_char) != -1)
                 \|| (a:mode == 1 && l:left_char == '<' && l:right_char == '>')
+        return "\<RIGHT>\<BS>\<BS>"
+    else
+        return "\<BS>"
+    endif
+endf
+
+func! RemoveMatch(mode)
+    let l:pos = col('.')
+    let l:lc = getline('.')[l:pos - 2]
+    let l:rc = getline('.')[l:pos - 1]
+    if (l:lc == '{' && l:rc == '}') || (l:lc == '(' && l:rc == ')')
+                \|| (l:lc == '[' && l:rc == ']')
+                \|| (l:lc == '"' && l:rc == '"')
+                \|| (l:lc == "'" && l:rc == "'")
+                \|| (a:mode == 1 && l:lc == '<' && l:rc == '>')
         return "\<RIGHT>\<BS>\<BS>"
     else
         return "\<BS>"
@@ -266,6 +285,8 @@ endf
 
 au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
             \ exe InputBrackets()
+au FileType php,javascript,java,c,cpp,python,vim,sh
+            \ exe InputSingleQuota()
 au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
             \ exe BackspaceReplace()
 au FileType html,xml exe MatchXML()
