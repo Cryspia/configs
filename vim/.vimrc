@@ -150,11 +150,11 @@ func! InputBrackets()
     inoremap ) <c-r>=CloseBracket(')')<CR>
     inoremap } <c-r>=CloseBracket('}')<CR>
     inoremap ] <c-r>=CloseBracket(']')<CR>
-    inoremap " <c-r>=CloseQuota('"')<CR>
 endf
 
-func! InputSingleQuota()
+func! InputQuotas()
     inoremap ' <c-r>=CloseQuota("'")<CR>
+    inoremap " <c-r>=CloseQuota('"')<CR>
 endf
 
 "Not used any more. This function can seldom be of use and is too slow.
@@ -286,7 +286,7 @@ endf
 au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
             \ exe InputBrackets()
 au FileType php,javascript,java,c,cpp,python,vim,sh
-            \ exe InputSingleQuota()
+            \ exe InputQuotas()
 au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
             \ exe BackspaceReplace()
 au FileType html,xml exe MatchXML()
