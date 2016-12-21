@@ -52,7 +52,7 @@ endif
 "-------------------------------------------------------------------------------
 "Windows/Mac backspace fix
 if has ('win32')
-	set backspace=2
+    set backspace=2
 endif
 if has ('unix')
     set backspace=indent,eol,start
@@ -336,6 +336,16 @@ func! CompileCPP()
                 \' && '.g:dirPrefix.shellescape('%:r'.g:cpe)<CR>
 endf
 
+func! CompileJava()
+    let g:cpb = ''
+    let g:cpa = ''
+    let g:exb = ''
+    let g:exa = ''
+    nnoremap <F9> :w<bar>exec '!javac '.g:cpb.' '.shellescape('%').' '.g:cpa<CR>
+    nnoremap <F10> :w<bar>exec '!javac '.g:cpb.' '.shellescape('%').' '.g:cpa.
+                \' && java '.g:exb.' '.shellescape('%:r').' '.g:exa<CR>
+endf
+
 func! RunPython()
     nnoremap <F9> :w<bar>exec '!python '.shellescape('%')<CR>
     nnoremap <F10> :w<bar>exec '!python3 '.shellescape('%')<CR>
@@ -357,6 +367,7 @@ endf
 
 au FileType c exe CompileC()
 au FileType cpp exe CompileCPP()
+au FileType java exe CompileJava()
 au FileType python exe RunPython()
 au FileType tex exe CompileTEX()
 au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
