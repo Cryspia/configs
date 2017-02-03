@@ -208,9 +208,11 @@ endf
 func! InputXMLgt()
     let l:pos = col('.')
     let l:line = getline('.')
-    if l:line[l:pos - 1] != '>' || (l:pos > 1 &&
-                \index(['<', ' ', '/', '\\'], l:line[l:pos-2]) != -1)
+    if l:line[l:pos - 1] != '>'
         return '>'
+    endif
+    if l:pos > 1 && index(['<', ' ', '/', '\\'], l:line[l:pos-2]) != -1
+        return "\<RIGHT>"
     endif
     let l:ln = line('.')
     normal %
