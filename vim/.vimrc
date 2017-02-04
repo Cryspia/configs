@@ -63,7 +63,7 @@ endif
 nnoremap <leader>y viwy
 
 "-------------------------------------------------------------------------------
-"No-yanking cut
+"Not used any more. This function is too complicated and may cause strange act
 func! NoYankPaste(prefix)
     let l:beof = line('$')
     let l:blne = line("'<")
@@ -105,10 +105,14 @@ vnoremap <leader>d "_d
 vnoremap <leader>D "_D
 nnoremap <leader>d "_d
 nnoremap <leader>D "_D
-vnoremap <silent> <leader>p :<c-u>call NoYankPaste('')<CR>
-nnoremap <silent> <leader>p viw:<c-u>call NoYankPaste('')<CR>
-vnoremap <silent> <leader>gp :<c-u>call NoYankPaste('g')<CR>
-nnoremap <silent> <leader>gp viw:<c-u>call NoYankPaste('g')<CR>
+"vnoremap <silent> <leader>p :<c-u>call NoYankPaste('')<CR>
+"nnoremap <silent> <leader>p viw:<c-u>call NoYankPaste('')<CR>
+"vnoremap <silent> <leader>gp :<c-u>call NoYankPaste('g')<CR>
+"nnoremap <silent> <leader>gp viw:<c-u>call NoYankPaste('g')<CR>
+vnoremap <silent> <leader>p pgvy
+nnoremap <silent> <leader>p viwpgvy
+vnoremap <silent> <leader>P Pgvy
+nnoremap <silent> <leader>P viwPgvy
 
 "-------------------------------------------------------------------------------
 "Brackets matching
