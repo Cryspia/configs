@@ -295,7 +295,7 @@ au FileType php,javascript,java,c,cpp,python,vim,sh
             \ exe InputQuotas()
 au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
             \ exe BackspaceReplace()
-au FileType html,xml exe MatchXML()
+au FileType html exe MatchXML()
 au FileType javascript,java,c,cpp,sh exe ReturnReplace()
 au FileType plaintex,context,tex exe MatchSection()
 
