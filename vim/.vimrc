@@ -444,6 +444,57 @@ nnoremap <silent> <S-TAB> :call ForceIndent()<CR>
 inoremap <S-TAB> <c-r>=ForceIndent()<CR>
 
 "-------------------------------------------------------------------------------
+"Comment / Uncomment target line(s)
+let g:cmmark = '# '
+au FileType c,cpp,java,javascript let g:cmmark = "//"
+au FileType vim let g:cmmark = '"'
+au FileType python,sh let g:cmmark = '#'
+au FileType plaintex,context,tex let g:cmmark='%'
+
+func! SingleLineComment()
+    let l:pos = col('.')
+    execute "normal! 0i".g:cmmark."\<ESC>".l:pos."\<RIGHT>"
+endf
+
+func! SingleLineUncomment(len)
+    let l:pos = col('.') - a:len
+    execute "normal! 0d".a:len."\<RIGHT>"
+    if (l:pos > 1)
+        execute "normal! ".(l:pos - 1)."\<RIGHT>"
+    endif
+endf
+
+func! MultiLineComment(len)
+    let l:blne = line("'<")
+    let l:elne = line("'>")
+    let l:line = line('.')
+    let l:pos = col('.') + a:len - 1
+    execute "normal! ".l:blne."G\<c-v>".l:elne."GI".g:cmmark."\<ESC>".
+                \l:line."G".l:pos."\<RIGHT>"
+endf
+
+func! MultiLineUncomment(len)
+    let l:blne = line("'<")
+    let l:elne = line("'>")
+    let l:line = line('.')
+    let l:pos = col('.') - a:len - 1
+    let l:offset = ''
+    if (a:len > 1)
+        let l:offset = (a:len - 1)."\<RIGHT>"
+    endif
+    execute "normal! ".l:blne."G\<c-v>".l:elne."G".l:offset.'"_d'.l:line.
+                \"G"
+    if (l:pos > 0)
+        execute "normal! ".l:pos."\<RIGHT>"
+    endif
+endf
+
+nnoremap <silent> <leader>= :call SingleLineComment()<CR>
+nnoremap <silent> <leader>- :call SingleLineUncomment(strlen(g:cmmark))<CR>
+vnoremap <silent> <leader>= :<c-u>call MultiLineComment(strlen(g:cmmark))<CR>
+vnoremap <silent> <leader>- :<c-u>call MultiLineUncomment(strlen(g:cmmark))<CR>
+
+"-------------------------------------------------------------------------------
 "Mark out EOL whitespace
 highlight WhitespaceEOL ctermbg=blue ctermfg=blue guibg=#66ccff
 match WhitespaceEOL /\s\+$/
