@@ -335,9 +335,9 @@ endf
 func! CompileCPP()
     let g:cpb = '-Wall -o'
     let g:cpa = ''
-    nnoremap <F9> :w<bar>exec '!g++ --std=c++11 '.g:cpb.' '.
+    nnoremap <F9> :w<bar>exec '!g++ --std=c++14 '.g:cpb.' '.
                 \shellescape('%:r'.g:cpe).' '.shellescape('%').' '.g:cpa<CR>
-    nnoremap <F10> :w<bar>exec '!g++ --std=c++11 '.g:cpb.' '.
+    nnoremap <F10> :w<bar>exec '!g++ --std=c++14 '.g:cpb.' '.
                 \shellescape('%:r'.g:cpe).' '.shellescape('%').' '.g:cpa.
                 \' && '.g:dirPrefix.shellescape('%:r'.g:cpe)<CR>
 endf
