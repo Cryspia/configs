@@ -22,6 +22,36 @@ set showmatch
 
 set mouse=a
 
+set autoread
+au WinEnter * filetype detect
+
+"-------------------------------------------------------------------------------
+"Unset old filetype keys and configs
+func! UnsetAll()
+    set expandtab!
+    call LengthTab(4)
+    let g:cmmark = '# '
+    inoremap ( (
+    inoremap { {
+    inoremap [ [
+    inoremap ) )
+    inoremap } }
+    inoremap ] ]
+    inoremap ' '
+    inoremap " "
+    inoremap < <
+    inoremap > >
+    inoremap <BS> <BS>
+    inoremap <RETURN> <RETURN>
+    nnoremap <F9> <F9>
+    nnoremap <F10> <F10>
+    nnoremap <F12> <F12>
+endf
+
+au FileType * exe UnsetAll()
+
+"-------------------------------------------------------------------------------
+"Tab settings
 set smarttab
 au FileType javascript,html,xml,java,c,cpp,python,vim,sh set expandtab
 
@@ -30,7 +60,6 @@ func! LengthTab(tabL)
     execute 'set shiftwidth='.a:tabL
     execute 'set softtabstop='.a:tabL
 endf
-call LengthTab(4)
 au FileType javascript,html,xml exe LengthTab(2)
 
 "-------------------------------------------------------------------------------
@@ -310,7 +339,7 @@ func! LineLength()
     endif
 endf
 
-au FileType php,javascript,java,c,cpp,python,vim,sh exe LineLength()
+call LineLength()
 
 "-------------------------------------------------------------------------------
 "Compiler/ctags call
@@ -445,7 +474,6 @@ inoremap <S-TAB> <c-r>=ForceIndent()<CR>
 
 "-------------------------------------------------------------------------------
 "Comment / Uncomment target line(s)
-let g:cmmark = '# '
 au FileType c,cpp,java,javascript let g:cmmark = "//"
 au FileType vim let g:cmmark = '"'
 au FileType python,sh let g:cmmark = '#'
