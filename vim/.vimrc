@@ -62,6 +62,23 @@ func! LengthTab(tabL)
 endf
 au FileType javascript,html,xml exe LengthTab(2)
 
+func! AutoCompleteTab()
+    let l:pos = col('.')
+    let l:tc = getline('.')[l:pos - 2]
+    let l:pc = getline('.')[l:pos - 3]
+    let l:tn = char2nr(l:tc)
+    let l:pn = char2nr(l:pc)
+    if (97 <= l:tn && l:tn <= 122) || (65 <= l:tn && l:tn <= 90) ||
+                \(48 <= l:tn && l:tn <= 57) || (l:tn == 36) || (l:tn == 46) ||
+                \(l:tn == 95) || (l:pn == 45 && l:tn == 62) ||
+                \(l:pn == 58 && l:tn == 58)
+        return "\<c-p>"
+    endif
+    return "\<TAB>"
+endf
+
+inoremap <TAB> <c-r>=AutoCompleteTab()<CR>
+
 "-------------------------------------------------------------------------------
 "GUI settings
 if has ('gui_running')
