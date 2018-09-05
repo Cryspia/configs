@@ -53,16 +53,16 @@ au FileType * exe UnsetAll()
 "-------------------------------------------------------------------------------
 "Tab settings
 set smarttab
-au FileType javascript,html,xml,java,c,cpp,python,vim,sh set expandtab
+au FileType javascript,html,xml,java,c,cpp,python,ocaml,vim,sh set expandtab
 
 func! LengthTab(tabL)
     execute 'set tabstop='.a:tabL
     execute 'set shiftwidth='.a:tabL
     execute 'set softtabstop='.a:tabL
 endf
-au FileType javascript,html,xml exe LengthTab(2)
+au FileType javascript,html,xml,ocaml exe LengthTab(2)
 
-func! AutoCompleteTab()
+func! AutoCompleteTab(cpl)
     let l:pos = col('.')
     let l:tc = getline('.')[l:pos - 2]
     let l:pc = getline('.')[l:pos - 3]
@@ -72,12 +72,13 @@ func! AutoCompleteTab()
                 \(48 <= l:tn && l:tn <= 57) || (l:tn == 36) || (l:tn == 46) ||
                 \(l:tn == 95) || (l:pn == 45 && l:tn == 62) ||
                 \(l:pn == 58 && l:tn == 58)
-        return "\<c-p>"
+        return a:cpl
     endif
     return "\<TAB>"
 endf
 
-inoremap <TAB> <c-r>=AutoCompleteTab()<CR>
+inoremap <TAB> <c-r>=AutoCompleteTab("\<c-p>")<CR>
+au FileType ocaml inoremap <TAB> <c-r>=AutoCompleteTab("\<c-x>\<c-o>")<CR>
 
 "-------------------------------------------------------------------------------
 "GUI settings
@@ -335,11 +336,11 @@ func! MatchSection()
     inoremap <RETURN> <c-r>=ReturnAtEnd()<CR>
 endf
 
-au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
+au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex
             \ exe InputBrackets()
-au FileType php,javascript,java,c,cpp,python,vim,sh
+au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh
             \ exe InputQuotas()
-au FileType php,javascript,java,c,cpp,python,vim,sh,plaintex,context,tex
+au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex
             \ exe BackspaceReplace()
 au FileType html exe MatchXML()
 au FileType javascript,java,c,cpp,sh exe ReturnReplace()
