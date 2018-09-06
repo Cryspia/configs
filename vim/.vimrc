@@ -338,7 +338,7 @@ endf
 
 au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex
             \ exe InputBrackets()
-au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh
+au FileType php,javascript,java,c,cpp,python,vim,sh
             \ exe InputQuotas()
 au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex
             \ exe BackspaceReplace()
