@@ -28,8 +28,8 @@ au WinEnter * filetype detect
 "-------------------------------------------------------------------------------
 "Unset old filetype keys and configs
 func! UnsetAll()
-    set expandtab!
-    call LengthTab(4)
+    set noexpandtab
+    call LengthTab(2)
     let g:cmmark = '# '
     inoremap ( (
     inoremap { {
@@ -53,17 +53,20 @@ au FileType * exe UnsetAll()
 "-------------------------------------------------------------------------------
 "Tab settings
 set smarttab
+au FileType vim call LengthTab(4)
 au FileType javascript,html,xml,java,c,cpp,python,ocaml,vim,sh set expandtab
 
 func! LengthTab(tabL)
     execute 'set tabstop='.a:tabL
     execute 'set shiftwidth='.a:tabL
-    execute 'set softtabstop='.a:tabL
+    "execute 'set softtabstop='.0
 endf
-au FileType javascript,html,xml,ocaml exe LengthTab(2)
 
 func! AutoCompleteTab(cpl)
     let l:pos = col('.')
+    if (l:pos < 2)
+        return "\<TAB>"
+    endif
     let l:tc = getline('.')[l:pos - 2]
     let l:pc = getline('.')[l:pos - 3]
     let l:tn = char2nr(l:tc)
@@ -72,12 +75,17 @@ func! AutoCompleteTab(cpl)
                 \(48 <= l:tn && l:tn <= 57) || (l:tn == 36) || (l:tn == 46) ||
                 \(l:tn == 95) || (l:pn == 45 && l:tn == 62) ||
                 \(l:pn == 58 && l:tn == 58)
-        return a:cpl
+        if (a:cpl == "")
+            return "\<c-n>"
+        else
+            return a:cpl
+        endif
     endif
     return "\<TAB>"
 endf
 
-inoremap <TAB> <c-r>=AutoCompleteTab("\<c-p>")<CR>
+
+inoremap <TAB> <c-r>=AutoCompleteTab("")<CR>
 au FileType ocaml inoremap <TAB> <c-r>=AutoCompleteTab("\<c-x>\<c-o>")<CR>
 
 "-------------------------------------------------------------------------------
@@ -336,14 +344,14 @@ func! MatchSection()
     inoremap <RETURN> <c-r>=ReturnAtEnd()<CR>
 endf
 
-au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex
+au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex,go
             \ exe InputBrackets()
-au FileType php,javascript,java,c,cpp,python,vim,sh
+au FileType php,javascript,java,c,cpp,python,vim,sh,go
             \ exe InputQuotas()
-au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex
+au FileType php,javascript,java,c,cpp,python,ocaml,vim,sh,plaintex,context,tex,go
             \ exe BackspaceReplace()
 au FileType html exe MatchXML()
-au FileType javascript,java,c,cpp,sh exe ReturnReplace()
+au FileType javascript,java,c,cpp,sh,go exe ReturnReplace()
 au FileType plaintex,context,tex exe MatchSection()
 
 "-------------------------------------------------------------------------------
@@ -404,6 +412,16 @@ func! RunPython()
     nnoremap <F10> :w<bar>exec '!python3 '.shellescape('%')<CR>
 endf
 
+func! CompileGO()
+    let g:cpb = ''
+    let g:cpa = ''
+    nnoremap <F9> :w<bar>exec '!go build '.g:cpb.' '.
+                \shellescape('%:r'.g:cpe).' '.shellescape('%').' '.g:cpa<CR>
+    nnoremap <F10> :w<bar>exec '!go build '.g:cpb.' '.
+                \shellescape('%:r'.g:cpe).' '.shellescape('%').' '.g:cpa.
+                \' && '.g:dirPrefix.shellescape('%:r'.g:cpe)<CR>
+endf
+
 func! CompileTEX()
     nnoremap <F9> :w<bar>exec '!xelatex -halt-on-error '.shellescape('%')<CR>
     nnoremap <F10> :w<bar>exec '!bibtex '.shellescape('%:r')<CR>
@@ -421,6 +439,7 @@ endf
 au FileType c exe CompileC()
 au FileType cpp exe CompileCPP()
 au FileType java exe CompileJava()
+au FileType go exe CompileGO()
 au FileType python exe RunPython()
 au FileType tex exe CompileTEX()
 au FileType c,cpp,python,java,vim,sh exe CtagsGenerate()
@@ -492,7 +511,7 @@ inoremap <S-TAB> <c-r>=ForceIndent()<CR>
 
 "-------------------------------------------------------------------------------
 "Comment / Uncomment target line(s)
-au FileType c,cpp,java,javascript let g:cmmark = "//"
+au FileType c,cpp,java,javascript,go let g:cmmark = "//"
 au FileType vim let g:cmmark = '"'
 au FileType python,sh let g:cmmark = '#'
 au FileType plaintex,context,tex let g:cmmark='%'
