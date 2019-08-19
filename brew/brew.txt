@@ -1,0 +1,9 @@
+brew install capnp cmake ctags ffmpeg gnutls go imagemagick kotlin ninja nmap node p7zip perl pkg-config python qt reattach-to-user-namespace source-highlight tmux unrar utf8proc wget vim ruby
+
+brew cask install xquartz inkscape java mactex xld kodi vlc keka --force
+
+brew tap homebrew/cask-drivers
+
+brew cask install luna-display xbox360-controller-driver-unofficial --force
+
+port install binutils
